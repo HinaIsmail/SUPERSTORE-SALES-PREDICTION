@@ -1,0 +1,56 @@
+# SUPERSTORE SALES PREDICTION
+![image.png](attachment:3c374c7a-d79c-490c-923d-6a8c5ba834d8.png)
+
+#                                    Data Source
+
+For this project, I leveraged a dataset from Kaggle, specifically the "Superstore Sales Dataset" by Rohit Sahoo. This dataset contains information regarding a retail data for 4 years (2015-2018).
+
+#                                     Problem Statement
+
+In the retail industry, understanding sales, customer behavior and product trends is essential for businesses striving to optimize their operations and enhance customer satisfaction. This dataset focus on online retail transactions, presents an opportunity to uncover critical aspects influencing business performance.
+
+#                                       Objective
+The following are business related questions to our data:
+
+1. What was the best month for sales? How much was earned that month?
+2. Top 10 states sold the most products?
+3. At what time do we have the highest sales?
+4. Are there certain times the number of items sold peaks or dip significantly?
+5. What top 10 product sold the most?
+# Import
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np                 
+import plotly.express as px
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+# Reading data
+storeSales = pd.read_csv("/kaggle/input/sales-forecasting/train.csv", sep=',', encoding="utf-8")
+# Some information about data
+storeSales.head()
+storeSales.info()
+storeSales.describe()
+storeSales.isnull()
+storeSales.shape
+storeSales.columns  
+# Data cleaning
+storeSales.isnull().sum() 
+storeSales[storeSales['Postal Code'].isnull()]
+storeSales['Postal Code'].fillna(5401, inplace=True)
+# Remove duplicates
+storeSales.duplicated().sum()  
+storeSales[storeSales.duplicated()] 
+storeSales.drop(['Row ID', 'Order ID', 'Customer ID', 'Customer Name'], axis=1, inplace=True)
+storeSales.head()
+# Date DataType Validation
+storeSales['order_date'] = pd.to_datetime(storeSales['Order Date'], dayfirst=True)
+storeSales['ship_date'] = pd.to_datetime(storeSales['Ship Date'], dayfirst=True)
+storeSales['YearMonth'] = storeSales['order_date'].apply(lambda x: x.strftime("%Y-%m"))
+storeSales['year'] = storeSales['order_date'].dt.year
+storeSales['month'] = storeSales['order_date'].dt.month_name()
+
+# Create a column for Number of Days require to ship the product.
+storeSales['shipInDays'] = (storeSales['ship_date'] - storeSales['order_date']).dt.days
+
+storeSales.head()
